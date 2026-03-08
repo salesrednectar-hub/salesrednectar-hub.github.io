@@ -1,14 +1,14 @@
-const CACHE = 'routesync-v10';
+const CACHE = 'routesync-v11';
 const STATIC = [
   '/routesync/',
   '/routesync/index.html',
-  '/routesync/manifest.json'
+  '/routesync/manifest.json',
+  '/routesync/sw.js'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(STATIC)).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));
 });
 
 self.addEventListener('activate', e => {
@@ -21,7 +21,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = e.request.url;
-  // Never cache Maps API, Firebase, or fonts
   if (url.includes('googleapis.com') || url.includes('gstatic.com') ||
       url.includes('firebase') || url.includes('fonts.')) return;
   e.respondWith(
